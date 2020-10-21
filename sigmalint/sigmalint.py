@@ -4,7 +4,9 @@ import io
 import yaml
 import pyrx
 import jsonschema
+import re
 
+from .modules.mitre import mitre_pull
 from .schema import rx_schema, json_schema, s2_schema
 
 rx = pyrx.Factory({'register_core_types': True})
@@ -15,7 +17,8 @@ schema = rx.make_schema(rx_schema)
 @click.option('--sigmainput', type=click.Path(exists=True, file_okay=True, readable=True, resolve_path=True), help='Path to a directory that comtains Sigma files or to a single Sigma file.', required=True)
 @click.option('--directory', is_flag=True, help="Flag for if sigmainput is a directory")
 @click.option('--method', type=click.Choice(['rx', 'jsonschema', 's2'], case_sensitive=False), default='rx', help='Validation method.')
-def cli(sigmainput, directory, method):
+@click.option('--mitre', is_flag=True, help='Enrich Sigma file with MITRE content based off of any MITRE references in tags.  This will append to the Sigma file.', required=False)
+def cli(sigmainput, directory, method, mitre):
     results = []
     filepaths = []
     
@@ -55,6 +58,27 @@ def cli(sigmainput, directory, method):
                             errors.append(error.message)
                         result = False if len(errors) > 0 else True
                         results.append({'result': result, 'reasons': errors, 'filename': filename})
+
+                    if mitre:
+                        for tag in sigma_yaml_list[0]['tags']: 
+                            if len(re.findall(r'(?i)t\d{4}',tag)) > 0:
+                                mitre_id = re.findall(r'(?i)t\d{4}',tag)
+                                mitre_id = mitre_id[0].upper()
+                                tactics, sub_techniques = mitre_pull(mitre_id) 
+                                ## Prevent multiple writes to file if `mitre` key already exists
+                                if 'mitre' not in sigma_yaml_list[0]:
+                                    sigma_yaml_list[0]['mitre'] = {} 
+                                    sigma_yaml_list[0]['mitre']['tactics'] = [] 
+                                    sigma_yaml_list[0]['mitre']['subTechniques'] = []
+                                if tactics is not None and sub_techniques is not None: 
+                                    for tactic in tactics:
+                                        ## Make sure we aren't duplicating
+                                        if tactic not in sigma_yaml_list[0]['mitre']['tactics']:
+                                            sigma_yaml_list[0]['mitre']['tactics'].append(tactic) 
+                                        if sub_techniques not in sigma_yaml_list[0]['mitre']['subTechniques']:
+                                            sigma_yaml_list[0]['mitre']['subTechniques'].append(sub_techniques)
+                        with open(os.path.join(sigmainput, filename), 'w') as f:
+                          yaml.dump(sigma_yaml_list[0], f)
 
     click.echo('Results:')
 

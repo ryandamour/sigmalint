@@ -4,12 +4,13 @@ A simple linter for Sigma rules
 
 ## Description
 
-sigmalint is a command line interface for validating Sigma rules against the Sigma schema.
+sigmalint is a command line interface for validating and enriching Sigma rules against the Sigma schema.
 
 The available arguments are:
 * `--sigmainput` - Path to a directory that comtains Sigma files or to a single Sigma file.
 * `--directory` - Flag for if sigmainput is a directory
 * `--method` - The schema validator that you wish to use (Default: rx)
+* `--mitre` - Enrich Sigma file with MITRE content based off of any MITRE references in `tags`
 
 The available methods are:
 * `rx` - uses PyRx and the Rx schema from the Sigma repo
@@ -32,6 +33,7 @@ Options:
                                [required]
  --directory                  Flag for if sigmainput is a directory
  --method [rx|jsonschema|s2]  Validation method.
+ --mitre                      Enrich Sigma file with MITRE content
  --help                       Show this message and exit.
 ```
 

@@ -20,7 +20,7 @@ setup(
     author='Ryan Plas',
     author_email='ryan.plas@stage2sec.com',
     entry_points={"console_scripts": ["sigmalint = sigmalint.sigmalint:cli"]},
-    packages=['sigmalint', 'sigmalint.schema'],
+    packages=['sigmalint', 'sigmalint.schema', 'sigmalint.modules'],
     package_dir={"": "."},
     package_data={},
     install_requires=[
