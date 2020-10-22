@@ -60,31 +60,33 @@ def cli(sigmainput, directory, method, mitre):
                         results.append({'result': result, 'reasons': errors, 'filename': filename})
 
                     if mitre:
-                        for tag in sigma_yaml_list[0]['tags']: 
-                            if len(re.findall(r'(?i)t\d{4}',tag)) > 0:
-                                mitre_id = re.findall(r'(?i)t\d{4}',tag)
-                                mitre_id = mitre_id[0].upper()
-                                tactics, sub_techniques, technique_id, references = mitre_pull(mitre_id) 
-                                ## Prevent multiple writes to file if `mitre` key already exists
-                                if 'mitre' not in sigma_yaml_list[0]:
-                                    sigma_yaml_list[0]['mitre'] = {} 
-                                    sigma_yaml_list[0]['mitre']['tactics'] = [] 
-                                    sigma_yaml_list[0]['mitre']['subTechniques'] = []
-                                    sigma_yaml_list[0]['mitre']['techniqueIds'] = []
-                                    sigma_yaml_list[0]['mitre']['references'] = []
-                                if tactics is not None and sub_techniques is not None and technique_id is not None and references is not None: 
-                                    for tactic in tactics:
-                                        ## Make sure we aren't duplicating
-                                        if tactic not in sigma_yaml_list[0]['mitre']['tactics']:
-                                            sigma_yaml_list[0]['mitre']['tactics'].append(tactic) 
-                                        if sub_techniques not in sigma_yaml_list[0]['mitre']['subTechniques']:
-                                            sigma_yaml_list[0]['mitre']['subTechniques'].append(sub_techniques)
-                                        if technique_id not in sigma_yaml_list[0]['mitre']['techniqueIds']:
-                                            sigma_yaml_list[0]['mitre']['techniqueIds'].append(technique_id)
-                                        if references not in sigma_yaml_list[0]['mitre']['references']:
-                                            sigma_yaml_list[0]['mitre']['references'].append(references)
-                        with open(os.path.join(sigmainput, filename), 'w') as f:
-                          yaml.dump(sigma_yaml_list[0], f)
+                        ## Most mentions of MITRE are currently found in the 'tags' field for Sigma rules
+                        if 'tags' in sigma_yaml_list[0]:
+                            for tag in sigma_yaml_list[0]['tags']: 
+                                if len(re.findall(r'(?i)t\d{4}',tag)) > 0:
+                                    mitre_id = re.findall(r'(?i)t\d{4}',tag)
+                                    mitre_id = mitre_id[0].upper()
+                                    tactics, sub_techniques, technique_id, references = mitre_pull(mitre_id) 
+                                    ## Prevent multiple writes to file if `mitre` key already exists
+                                    if 'mitre' not in sigma_yaml_list[0]:
+                                        sigma_yaml_list[0]['mitre'] = {} 
+                                        sigma_yaml_list[0]['mitre']['tactics'] = [] 
+                                        sigma_yaml_list[0]['mitre']['subTechniques'] = []
+                                        sigma_yaml_list[0]['mitre']['techniqueIds'] = []
+                                        sigma_yaml_list[0]['mitre']['references'] = []
+                                    if tactics is not None and sub_techniques is not None and technique_id is not None and references is not None: 
+                                        for tactic in tactics:
+                                            ## Make sure we aren't duplicating
+                                            if tactic not in sigma_yaml_list[0]['mitre']['tactics']:
+                                                sigma_yaml_list[0]['mitre']['tactics'].append(tactic) 
+                                            if sub_techniques not in sigma_yaml_list[0]['mitre']['subTechniques']:
+                                                sigma_yaml_list[0]['mitre']['subTechniques'].append(sub_techniques)
+                                            if technique_id not in sigma_yaml_list[0]['mitre']['techniqueIds']:
+                                                sigma_yaml_list[0]['mitre']['techniqueIds'].append(technique_id)
+                                            if references not in sigma_yaml_list[0]['mitre']['references']:
+                                                sigma_yaml_list[0]['mitre']['references'].append(references)
+                            with open(os.path.join(sigmainput, filename), 'w') as f:
+                              yaml.dump(sigma_yaml_list[0], f)
 
     click.echo('Results:')
 
