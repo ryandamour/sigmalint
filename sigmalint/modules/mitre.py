@@ -29,6 +29,9 @@ def mitre_pull(technique_id):
       sub_techniques = re.sub('<[^>]+>','',sub_techniques)
       sub_techniques = sub_techniques.replace('\n','')
 
-      return tactics, sub_techniques
+      # Reference
+      references = "https://attack.mitre.org/techniques/"+str(technique_id)+"/"
+      # Make sure we return technique_id if valid values were returned
+      return tactics, sub_techniques, technique_id, references
   except:
-      return None, None 
+      return None, None, None, None 
