@@ -89,7 +89,7 @@ def cli(sigmainput, directory, method, mitre):
                                 with open(os.path.join(sigmainput, filename), 'w') as f:
                                     yaml.dump(sigma_yaml_list[0], f)
                             except:
-                                click.secho('Unable to parse {}'.format(os.path.join(sigmainput, result['filename'])), fg=color)
+                                click.secho('Unable to parse {}'.format(filename))
 
 
     click.echo('Results:')
