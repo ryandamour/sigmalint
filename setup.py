@@ -25,7 +25,7 @@ setup(
     package_data={},
     install_requires=[
         'click==7.*,>=7.1.2', 'jsonschema==3.*,>=3.2.0', 'pyrx==0.*,>=0.3.0',
-        'pyyaml==5.*,>=5.3.1'
+        'pyyaml==5.*,>=5.3.1', 'beautifulsoup4==4.*,>=4.9.3'
     ],
     extras_require={
         "dev": ["pytest==5.*,>=5.4.3", "pytest-cov==2.*,>=2.10.0"]},
