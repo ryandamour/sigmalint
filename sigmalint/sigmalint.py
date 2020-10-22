@@ -81,7 +81,7 @@ def cli(sigmainput, directory, method, mitre):
                                             sigma_yaml_list[0]['mitre']['subTechniques'].append(sub_techniques)
                                         if technique_id not in sigma_yaml_list[0]['mitre']['techniqueIds']:
                                             sigma_yaml_list[0]['mitre']['techniqueIds'].append(technique_id)
-                                        if technique_id not in sigma_yaml_list[0]['mitre']['references']:
+                                        if references not in sigma_yaml_list[0]['mitre']['references']:
                                             sigma_yaml_list[0]['mitre']['references'].append(references)
                         with open(os.path.join(sigmainput, filename), 'w') as f:
                           yaml.dump(sigma_yaml_list[0], f)
